@@ -4,7 +4,7 @@ from itertools import combinations
 def is_header(line):
     return line.startswith('>')
 
-# Read the file and skip the first line
+# Read the file; replace lines = file.readlines()[0:] with lines = file.readlines()[1:] if there is a sequence length as your header
 with open(sys.argv[1], 'r') as file:
     lines = file.readlines()[0:]
 
@@ -12,7 +12,7 @@ headers = []
 sequences = []
 current_sequence = ''
 
-# Collect sequences and their corresponding headers
+# Collect sequences and their corresponding populations
 for line in lines:
     if is_header(line):
         if current_sequence:
@@ -25,7 +25,7 @@ for line in lines:
 if current_sequence:
     sequences.append(current_sequence)
 
-# Function to count differences and matching patterns
+# Function to count fourfold differences and fourfold sites
 def count_differences_with_patterns(s1, s2):
     matching_patterns_counter = 0
     differences_counter = 0
