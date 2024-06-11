@@ -25,25 +25,39 @@ for line in lines:
 if current_sequence:
     sequences.append(current_sequence)
 
-# Function to count fourfold differences and fourfold sites
-def count_differences_with_patterns(s1, s2):
-    matching_patterns_counter = 0
-    differences_counter = 0
+# Function to find positions where patterns match across all sequences
+def find_matching_positions(sequences):
     patterns = ["CT", "GT", "TC", "CC", "AC", "GC", "CG", "GG"]
-    min_length = min(len(s1), len(s2))
+    min_length = min(len(s) for s in sequences)
+    matching_positions = []
 
     for i in range(0, min_length - 2, 3):
-        segment1, segment2 = s1[i:i+2], s2[i:i+2]
-        if segment1 in patterns and segment2 in patterns:
-            matching_patterns_counter += 1
-            if s1[i+2] != s2[i+2]:
+        segments = [s[i:i+2] for s in sequences]
+        if all(segment in patterns for segment in segments):
+            matching_positions.append(i)
+
+    return matching_positions
+
+# Function to count pairwise differences at matching positions
+def count_pairwise_differences(sequences, matching_positions):
+    pairwise_results = []
+    for (i, j) in combinations(range(len(sequences)), 2):
+        differences_counter = 0
+        for pos in matching_positions:
+            if sequences[i][pos+2] != sequences[j][pos+2]:
                 differences_counter += 1
+        pairwise_results.append((i, j, differences_counter))
+    return pairwise_results
 
-    return matching_patterns_counter, differences_counter
+# Find matching positions
+matching_positions = find_matching_positions(sequences)
 
-# Calculate and print results for each pair of sequences
-for (i, j) in combinations(range(len(sequences)), 2):
-    matching_patterns, differences = count_differences_with_patterns(sequences[i], sequences[j])
-    print(f"{sys.argv[1]}{chr(9)}{headers[i]}{chr(9)}{headers[j]}{chr(9)}{matching_patterns}{chr(9)}{differences}")
+# Count pairwise differences at matching positions
+pairwise_differences = count_pairwise_differences(sequences, matching_positions)
+
+# Print results
+for i, j, differences in pairwise_differences:
+    print(f"{sys.argv[1]}{chr(9)}{headers[i]}{chr(9)}{headers[j]}{chr(9)}{len(matching_positions)}{chr(9)}{differences}")
+
 
 
