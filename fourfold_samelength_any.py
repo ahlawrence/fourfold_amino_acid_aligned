@@ -1,6 +1,7 @@
 import os, sys
 from itertools import combinations
 
+#make sure the input file is in fasta format with headers starting with >
 def is_header(line):
     return line.startswith('>')
 
