@@ -10,16 +10,19 @@ done
 ###Cut indels from each sample file ########
 module load Java/1.8.0_60
 
-name="JGI.refIM767.unfilt.fspi.JGI_IM62_sampled"
+
+name=""
+genome=""
+
 
 tabix $name.vcf.gz 
-gatk SelectVariants -R /datacommons/willislab/im767.v2/Mguttatus.IM767.v2.fa -V $name.vcf.gz -xl-select-type INDEL -O $name.SNP.vcf
+gatk SelectVariants -R $genome -V $name.vcf.gz -xl-select-type INDEL -O $name.SNP.vcf
 
 
 bgzip $name.SNP.vcf
 tabix $name.SNP.vcf.gz 
 
-bcftools consensus -f /datacommons/willislab/im767.v2/Mguttatus.IM767.v2.fa $name.SNP.vcf.gz > $name.fullgenome.fasta
+bcftools consensus -f $genome $name.SNP.vcf.gz > $name.fullgenome.fasta
 
 for file in *.fullgenome.fasta; do
 cat $file | sed -e 's/>[0-9]\+ />/g' | sed 's/[:].*$//' > $file.clean
